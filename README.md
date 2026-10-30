@@ -4,7 +4,6 @@
 
 - 网站：https://maybe112358.github.io/ds-course-answers/
 - 题目原文：[课程设计（一）选题.md](<课程设计（一）选题.md>)
-- 一键下载全部代码：[ds-course-answers-code.zip](ds-course-answers-code.zip)
 - 全部代码都按 C99 用 gcc 编译通过（`-Wall -Wextra` 无警告），并用示例数据运行验证。
 
 | 题号 | 题目 | 解法一 | 解法二 |
