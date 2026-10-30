@@ -64,18 +64,18 @@ body { background: var(--paper); color: var(--ink); font: 1rem/1.75 var(--f-body
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
-.wrap {
-  max-width: 84rem;
-  margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+/* 侧边栏固定在左侧、占满整个屏幕高度，题目列表在侧边栏内部单独滚动，与正文长短无关 */
+:root { --side-w: 18rem; }
+.sidebar {
+  position: fixed; top: 0; bottom: 0; left: 0; z-index: 5; width: var(--side-w);
+  display: flex; flex-direction: column; gap: 14px;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) 14px 0 max(14px, env(safe-area-inset-left, 0px));
+  background: var(--surface); border-right: 1px solid var(--line);
 }
-
-.topbar { background: var(--surface); border-bottom: 1px solid var(--line); }
-.topbar .wrap { padding-block: 16px; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; }
+.side-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding-inline: 4px; }
 .brand { font: 900 1.25rem/1.3 var(--f-display); letter-spacing: 0.02em; margin: 0; }
-.brand-sub { color: var(--muted); font-size: 0.875rem; }
-.actions { margin-left: auto; align-self: center; display: flex; flex: none; }
+.brand-sub { display: block; margin-top: 2px; color: var(--muted); font-size: 0.8125rem; line-height: 1.5; }
+.main { margin-left: var(--side-w); min-width: 0; }
 .theme {
   flex: none; cursor: pointer;
   width: 2.25rem; height: 2.25rem; display: grid; place-items: center;
@@ -84,46 +84,46 @@ a { color: inherit; }
 .theme:hover { color: var(--accent); border-color: var(--accent); }
 .theme svg { width: 1.125rem; height: 1.125rem; }
 
-.shell { display: grid; grid-template-columns: 18rem minmax(0, 1fr); gap: 3rem; padding-block: 1.75rem 5rem; }
-
 /* 目录 */
-.toc {
-  position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); align-self: start;
-  max-height: calc(100vh - 32px - env(safe-area-inset-top, 0px));
-  max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px));
-  display: flex; flex-direction: column; min-width: 0;
-}
 .toc-toggle { display: none; }
-.toc-body { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.toc-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
 .search {
   width: 100%; padding: 9px 12px; font: inherit; font-size: 0.875rem; color: var(--ink);
-  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
 }
 .search::placeholder { color: var(--muted); }
 /* 分类：与解法切换同一种分段样式，5 列对齐 */
 .chips {
   display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; padding: 3px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
 }
 .chip {
   font: inherit; font-size: 0.8125rem; line-height: 1.2; padding: 7px 0; cursor: pointer; white-space: nowrap;
   color: var(--muted); background: transparent; border: 0; border-radius: 7px;
 }
-.chip:hover { color: var(--ink); background: var(--paper); }
+.chip:hover { color: var(--ink); background: var(--surface); }
 .chip[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
-.list { list-style: none; margin: 0; padding: 0; overflow-y: auto; min-height: 0; }
+.list {
+  list-style: none; margin: 0 -6px; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: 0 6px calc(16px + env(safe-area-inset-bottom, 0px));
+}
 .item {
   display: grid; grid-template-columns: 1.9em minmax(0, 1fr); gap: 6px; align-items: baseline;
   padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 0.875rem; line-height: 1.5;
 }
-.item:hover { background: var(--surface); }
+.item:hover { background: var(--paper); }
 .item[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 .item .no { font: 0.8125rem var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .item[aria-current="page"] .no { color: inherit; }
 .empty-list { padding: 12px 10px; color: var(--muted); font-size: 0.875rem; }
 
 /* 题目页 */
-.page { min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+.page {
+  min-width: 0; max-width: 68rem; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;
+  padding-block: 2rem 5rem;
+  padding-left: max(16px, 3vw);
+  padding-right: max(16px, 3vw, env(safe-area-inset-right, 0px));
+}
 .head { display: flex; flex-direction: column; gap: 6px; }
 .eyebrow { font-size: 0.875rem; color: var(--muted); }
 .eyebrow b { color: var(--accent); font-weight: 600; }
@@ -197,34 +197,40 @@ h1.title { font: 900 clamp(1.625rem, 3vw, 2.125rem)/1.3 var(--f-display); margin
 .duo h2 { margin: 0; font: 700 1.125rem/1.4 var(--f-display); }
 .duo h2 small { display: block; font: 600 0.875rem var(--f-body); color: var(--accent); }
 @media (min-width: 1800px) {
-  .wrap { max-width: 120rem; }
-  .shell { grid-template-columns: 19rem minmax(0, 1fr); gap: 3.5rem; }
+  :root { --side-w: 19rem; }
+  .page { max-width: 110rem; }
   .statement { max-width: 90ch; }
 }
 
-/* 小笔记本、平板横屏：目录收窄 */
+/* 小笔记本、平板横屏：侧边栏收窄 */
 @media (max-width: 1100px) {
-  .shell { grid-template-columns: 14.5rem minmax(0, 1fr); gap: 2rem; }
+  :root { --side-w: 15rem; }
+  .chip { font-size: 0.75rem; }
 }
 
+/* 平板竖屏、手机：侧边栏变成页面顶部的一栏，题目列表收进“目录”按钮 */
 @media (max-width: 880px) {
-  .shell { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 16px 64px; }
-  .toc { position: static; max-height: none; gap: 12px; }
+  .sidebar {
+    position: static; width: auto; gap: 12px; border-right: 0; border-bottom: 1px solid var(--line);
+    padding: calc(14px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px));
+  }
+  .side-head { padding-inline: 0; }
+  .main { margin-left: 0; }
+  .page { padding-block: 20px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .chip { font-size: 0.8125rem; }
+  .list { flex: none; max-height: 55vh; padding-bottom: 4px; }
   .toc-toggle {
     display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%;
     font: inherit; font-size: 0.9375rem; text-align: left; cursor: pointer; color: var(--ink);
-    padding: 10px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
   }
   .toc-toggle span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .toc-toggle .arrow { color: var(--muted); flex: none; }
-  .toc:not(.open) .toc-body { display: none; }
-  .list { max-height: 55vh; }
+  .sidebar:not(.open) .toc-body { display: none; }
 }
 
 /* 手机：解法按钮改成上下排列，代码字号略小，翻页上下排 */
 @media (max-width: 560px) {
-  .topbar .wrap { padding-block: 12px; }
-  .brand-sub { font-size: 0.8125rem; order: 3; flex-basis: 100%; }
   .page { gap: 20px; }
   .switch { display: grid; width: 100%; }
   .tab { white-space: normal; text-align: left; }
@@ -243,27 +249,25 @@ h1.title { font: 900 clamp(1.625rem, 3vw, 2.125rem)/1.3 var(--f-display); margin
 <style>body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important; }</style>
 </head>
 <body>
-<header class="topbar">
-  <div class="wrap">
-    <p class="brand">课程设计答案库</p>
-    <span class="brand-sub">数据结构 · 线性结构设计题目 36 道，每题两种 C 语言解法</span>
-    <div class="actions">
-      <button class="theme" id="themeBtn" type="button"></button>
+<nav class="sidebar" id="toc" aria-label="题目目录">
+  <div class="side-head">
+    <div>
+      <p class="brand">课程设计答案库</p>
+      <span class="brand-sub">数据结构 · 线性结构 36 题<br>每题两种 C 语言解法</span>
     </div>
+    <button class="theme" id="themeBtn" type="button"></button>
   </div>
-</header>
+  <button class="toc-toggle" id="tocToggle" type="button" aria-expanded="false" aria-controls="tocBody">
+    <span id="tocToggleText">全部题目</span><span class="arrow">目录 ▾</span>
+  </button>
+  <div class="toc-body" id="tocBody">
+    <input class="search" id="search" type="search" placeholder="搜索题目" autocomplete="off">
+    <div class="chips" id="chips"></div>
+    <ul class="list" id="list"></ul>
+  </div>
+</nav>
 
-<div class="wrap shell">
-  <nav class="toc" id="toc" aria-label="题目目录">
-    <button class="toc-toggle" id="tocToggle" type="button" aria-expanded="false" aria-controls="tocBody">
-      <span id="tocToggleText">全部题目</span><span class="arrow">目录 ▾</span>
-    </button>
-    <div class="toc-body" id="tocBody">
-      <input class="search" id="search" type="search" placeholder="搜索题目" autocomplete="off">
-      <div class="chips" id="chips"></div>
-      <ul class="list" id="list"></ul>
-    </div>
-  </nav>
+<div class="main">
   <main class="page" id="page"></main>
 </div>
 
@@ -6765,6 +6769,10 @@ function go() {
   if (changed) state.tab = 0;
   renderList();
   renderPage();
+  if (changed && window.matchMedia('(min-width: 881px)').matches) {
+    const cur = document.querySelector('.item[aria-current="page"]');
+    if (cur) cur.scrollIntoView({ block: 'nearest' });   /* 侧边栏里当前题目保持可见 */
+  }
   if (changed && m) {
     $('toc').classList.remove('open');
     $('tocToggle').setAttribute('aria-expanded', 'false');
