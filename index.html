@@ -221,7 +221,7 @@ h1.title { font: 900 clamp(1.625rem, 3vw, 2.125rem)/1.3 var(--f-display); margin
 /* 手机：解法按钮改成上下排列，代码字号略小，翻页上下排 */
 @media (max-width: 560px) {
   .topbar .wrap { padding-block: 12px; }
-  .brand-sub { font-size: 0.8125rem; }
+  .brand-sub { font-size: 0.8125rem; order: 3; flex-basis: 100%; }
   .page { gap: 20px; }
   .switch { display: grid; width: 100%; }
   .tab { white-space: normal; text-align: left; }
